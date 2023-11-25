@@ -33,10 +33,10 @@
                           (fn [] (send-kondo-config-to-shadow!))
 
                           :on-disconnect
-                          (fn [e])
+                          (fn [_])
 
                           :on-reconnect
-                          (fn [e] (send-kondo-config-to-shadow!))})
+                          (fn [_] (send-kondo-config-to-shadow!))})
       env)
 
     (fn [{:keys [runtime]}]

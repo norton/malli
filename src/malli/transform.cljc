@@ -431,7 +431,7 @@
                                                                (when (or (not optional) add-optional-keys)
                                                                  (let [e (find p key)]
                                                                    (when-some [f (if e (constantly (val e))
-                                                                                       (get-default v))]
+                                                                                     (get-default v))]
                                                                      [k (fn [] (default-fn schema (f)))])))))
                                                        (m/children schema))]
                                     (when (seq defaults)

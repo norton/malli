@@ -86,8 +86,8 @@
                                  form))
                 schema* (walk/postwalk -qualify-sym schema)
                 metadata (assoc
-                           (walk/postwalk -qualify-sym (m/-unlift-keys meta "malli"))
-                           :metadata-schema? true)]
+                          (walk/postwalk -qualify-sym (m/-unlift-keys meta "malli"))
+                          :metadata-schema? true)]
             `(do
                (m/-register-function-schema! '~ns '~simple-name ~schema* ~metadata :cljs identity)
                '~(:name var-map))))))))

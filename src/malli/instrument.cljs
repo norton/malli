@@ -102,11 +102,11 @@
          (case mode
            :instrument (let [original-fn (or (-original v) v)
                              dgen (as-> (select-keys options [:scope :report :gen]) $
-                                        (cond-> $ report (update :report (fn [r] (fn [t data] (r t (assoc data :fn-name (symbol (name n) (name s))))))))
-                                        (merge $ d)
-                                        (cond (and gen (true? (:gen d))) (assoc $ :gen gen)
-                                              (true? (:gen d)) (dissoc $ :gen)
-                                              :else $))]
+                                    (cond-> $ report (update :report (fn [r] (fn [t data] (r t (assoc data :fn-name (symbol (name n) (name s))))))))
+                                    (merge $ d)
+                                    (cond (and gen (true? (:gen d))) (assoc $ :gen gen)
+                                          (true? (:gen d)) (dissoc $ :gen)
+                                          :else $))]
                          (if (and skip-instrumented? (-instrumented? v))
                            (println "skipping" (symbol n s) "already instrumented")
                            (when original-fn

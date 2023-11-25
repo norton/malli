@@ -1,6 +1,67 @@
 {:deps {metosin/malli {:local/root "."}}
+ :pods {clj-kondo/clj-kondo {:version "2023.01.20"}}
  :tasks
- {test-clj {:doc "Run JVM Clojure tests with kaocha"
+ {:requires ([babashka.cli :as cli]
+             [babashka.fs :as fs]
+             [pod.borkdude.clj-kondo :as clj-kondo])
+  :init
+  (do
+    (def lint-paths
+      ["bb.edn" "deps.edn" "src" "test"]))
+
+  clean
+  (shell "rm -rf .vpyenv .vnodeenv node_modules")
+
+  lint
+  {:doc "Lint all code directories with clj-kondo."
+   :task (do (clj-kondo/print!
+              (clj-kondo/run! {:lint lint-paths}))
+             (clojure "-Ttools install-latest :lib io.github.weavejester/cljfmt :as cljfmt")
+             (clojure (str "-Tcljfmt check :paths '" (prn-str lint-paths) "'")))}
+
+  format
+  {:doc "Format all code with cljfmt."
+   :task (do (clojure "-Ttools install-latest :lib io.github.weavejester/cljfmt :as cljfmt")
+             (clojure (str "-Tcljfmt fix :paths '" (prn-str lint-paths) "'")))}
+
+  upgrade
+  {:doc "Upgrade all code with antq."
+   :task (do (clojure "-Ttools install-latest :lib com.github.liquidz/antq :as antq")
+             (clojure "-Tantq outdated :check-clojure-tools true :upgrade true"))}
+
+  watson
+  {:doc "Scan for vulnerable direct/transitive dependencies with clj-watson."
+   :task (do (clojure "-Ttools install-latest :lib io.github.clj-holmes/clj-watson :as clj-watson")
+             (clojure "-Tclj-watson scan '{:output \"stdout\" :dependency-check-properties nil :fail-on-result true :deps-edn-path \"deps.edn\" :suggest-fix true :aliases [\"*\"] :database-strategy \"dependency-check\"}'"))}
+
+  -vpyenv-install
+  (if-not (fs/exists? ".vpyenv")
+    (do
+      (shell "python3 -m venv .vpyenv")
+      (shell "bash -c" "source .vpyenv/bin/activate && pip install -q --upgrade pip")))
+
+  -vnodeenv-install
+  {:depends [-vpyenv-install]
+   :task (if-not (fs/exists? ".vpyenv/bin/nodeenv")
+           (shell "bash -c" "source .vpyenv/bin/activate && pip install -q nodeenv"))}
+
+  -node-install
+  {:depends [-vnodeenv-install]
+   :task (if-not (fs/exists? ".vnodeenv")
+           (shell "bash -c" "source .vpyenv/bin/activate && nodeenv -q .vnodeenv"))}
+
+  -npm-install
+  {:depends [-node-install]
+   :task (shell "bash -c" "source .vnodeenv/bin/activate && npm install -q")}
+
+  npm-joda-install
+  {:depends [-npm-install]
+   :doc "Install joda core and timezone"
+   :task (do
+           (shell "bash -c 'source .vnodeenv/bin/activate && npm install @js-joda/core @js-joda/timezone")
+           (shell "bash -c 'source .vnodeenv/bin/activate && npm audit fix'"))}
+
+  test-clj {:doc "Run JVM Clojure tests with kaocha"
             :task (apply clojure {:extra-env {"TEST_SCI" "true"}}
                          (str "-A:" (System/getenv "CLOJURE"))
                          "-M:test" "-m" "kaocha.runner" *command-line-args*)}
@@ -25,7 +86,7 @@
                          (println "Running CLJS tests with cherry, with optimizations")
                          (apply clojure "-M:test:cljs-test-runner:cherry:test-cherry" "-c"
                                 (str {:optimizations :advanced,
-                                       ;; see https://clojure.atlassian.net/browse/CLJS-3401
+                                      ;; see https://clojure.atlassian.net/browse/CLJS-3401
                                       :optimize-constants false})
                                 "-e" ":simple"
                                 *command-line-args*))}

@@ -64,7 +64,7 @@
   (-instant-gen schema options))
 
 (comment
- (gen/sample (mg/-schema-generator (time/-instant-schema) nil)))
+  (gen/sample (mg/-schema-generator (time/-instant-schema) nil)))
 
 (defmethod mg/-schema-generator :time/local-date [schema options]
   (ga/fmap #(. LocalDate ofEpochDay %) (gen/large-integer* (-min-max schema options))))
@@ -76,7 +76,7 @@
   (-local-time-gen schema options))
 
 (comment
- (gen/sample (mg/-schema-generator (time/-local-time-schema) nil)))
+  (gen/sample (mg/-schema-generator (time/-local-time-schema) nil)))
 
 (defn -offset-time-gen [schema options]
   (let [local-opts (assoc options :accessor #(.toLocalTime ^OffsetTime %))
@@ -92,7 +92,7 @@
   (-offset-time-gen schema options))
 
 (comment
- (gen/sample (mg/-schema-generator (time/-offset-time-schema) nil)))
+  (gen/sample (mg/-schema-generator (time/-offset-time-schema) nil)))
 
 (defmethod mg/-schema-generator :time/local-date-time [schema options]
   (gen/fmap
@@ -103,7 +103,7 @@
    (gen/large-integer* (-min-max schema options))))
 
 (comment
- (gen/sample (mg/-schema-generator (time/-local-date-time-schema) nil) 1000))
+  (gen/sample (mg/-schema-generator (time/-local-date-time-schema) nil) 1000))
 
 (defn -zoned-date-time-gen [schema options]
   (gen/bind
@@ -115,7 +115,7 @@
   (-zoned-date-time-gen schema options))
 
 (comment
- (gen/sample (mg/-schema-generator (time/-zoned-date-time-schema) nil) 100))
+  (gen/sample (mg/-schema-generator (time/-zoned-date-time-schema) nil) 100))
 
 (defn -offset-date-time-gen [schema options]
   (gen/fmap #(. OffsetDateTime from %) (-zoned-date-time-gen schema options)))
@@ -135,8 +135,8 @@
         floor-min (fn [v] (if (nil? v) min-int (max min-int v)))
         {^Period mn :min ^Period mx :max ^Period gen-min :gen/min ^Period gen-max :gen/max}
         (merge
-          (m/type-properties schema options)
-          (m/properties schema options))
+         (m/type-properties schema options)
+         (m/properties schema options))
         _ (when (and mn gen-min (not (pos? (time/compare-periods gen-min min))))
             (m/-fail! ::mg/invalid-property {:key :gen/min, :value gen-min, :min min}))
         _ (when (and mx gen-max (not (pos? (time/compare-periods  max gen-max))))
@@ -147,10 +147,10 @@
         min-months (when mn (zero->nil (.getMonths mn))), max-months (when mx (zero->nil (.getMonths mx)))
         min-days   (when mn (zero->nil (.getDays mn))), max-days   (when mx (zero->nil (.getDays mx)))]
     (->>
-      (gen/tuple
+     (gen/tuple
         ;; Period constructor only accepts java type `int` not `long`, clamp the values
-        (gen/large-integer* {:min (floor-min min-years) :max (ceil-max max-years)})
-        (gen/large-integer* {:min (floor-min min-months) :max (ceil-max max-months)})
-        (gen/large-integer* {:min (floor-min min-days) :max (ceil-max max-days)}))
-      (gen/fmap (fn [[years months days]]
-                  (. Period of years months days))))))
+      (gen/large-integer* {:min (floor-min min-years) :max (ceil-max max-years)})
+      (gen/large-integer* {:min (floor-min min-months) :max (ceil-max max-months)})
+      (gen/large-integer* {:min (floor-min min-days) :max (ceil-max max-days)}))
+     (gen/fmap (fn [[years months days]]
+                 (. Period of years months days))))))

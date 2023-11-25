@@ -23,9 +23,9 @@
 
 (defn -color [color body printer]
   (let [colors (:colors printer -dark-colors)
-        color (get colors color (:error colors))]
+        _color (get colors color (:error colors))]
     #?(:cljs [:span body]
-       :clj (if color
+       :clj (if _color
               [:span [:pass (str "\033[38;5;" color "m")] body [:pass "\u001B[0m"]]
               [:span body]))))
 

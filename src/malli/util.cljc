@@ -355,7 +355,7 @@
   [schema ks f & args]
   (letfn [(up [s [k & ks] f args]
             (assoc s k (if ks (up (get s k (m/schema :map (m/options schema))) ks f args)
-                              (apply f (get s k) args))))]
+                           (apply f (get s k) args))))]
     (up schema ks f args)))
 
 ;;

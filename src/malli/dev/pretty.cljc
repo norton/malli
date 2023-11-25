@@ -58,12 +58,12 @@
     (-block "Errors:" (-explain output value printer) printer) :break :break
     (-block "More information:" (-link "https://cljdoc.org/d/metosin/malli/CURRENT/doc/function-schemas" printer) printer)]})
 
-(defmethod v/-format ::m/invalid-arity [_ _ {:keys [args arity schema fn-name]} printer]
+(defmethod v/-format ::m/invalid-arity [_ _ {:keys [args arity schema _fn-name]} printer]
   {:body
    [:group
     (-block (str "Invalid function arity (" arity "):") (v/-visit args printer) printer) :break :break
     (-block "Function Schema:" (v/-visit schema printer) printer) :break :break
-    #?(:cljs (-block "Function Var:" (v/-visit fn-name printer) printer)) :break :break
+    #?(:cljs (-block "Function Var:" (v/-visit _fn-name printer) printer)) :break :break
     (-block "More information:" (-link "https://cljdoc.org/d/metosin/malli/CURRENT/doc/function-schemas" printer) printer)]})
 
 ;;

@@ -52,8 +52,8 @@
       (if (and (instance? Period min) (instance? Period max))
         (fn [^Period x]
           (and
-            (not (pos? (compare-periods x max)))
-            (not (pos? (compare-periods min x)))))
+           (not (pos? (compare-periods x max)))
+           (not (pos? (compare-periods min x)))))
         (fn [x] (and (<= x max) (<= min x))))
       min (fn [x]
             (if (instance? Period min)
@@ -66,14 +66,14 @@
 
 (defn -temporal-schema [{:keys [type class type-properties]}]
   (m/-simple-schema
-    (cond->
-      {:type type
-       :pred (fn pred [x]
-               #?(:clj (.isInstance ^Class class x)
-                  :cljs (instance? class x)))
-       :property-pred (-min-max-pred nil)}
-      type-properties
-      (assoc :type-properties type-properties))))
+   (cond->
+    {:type type
+     :pred (fn pred [x]
+             #?(:clj (.isInstance ^Class class x)
+                :cljs (instance? class x)))
+     :property-pred (-min-max-pred nil)}
+     type-properties
+     (assoc :type-properties type-properties))))
 
 #?(:cljs
    (defn createTemporalQuery [f]

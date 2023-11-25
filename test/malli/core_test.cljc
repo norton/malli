@@ -347,7 +347,7 @@
                                 [:y keyword?]
                                 [:enter boolean?]]]]]]
           (are [input result]
-            (= (m/decode (mu/closed-schema schema) input (mt/string-transformer)) result)
+               (= (m/decode (mu/closed-schema schema) input (mt/string-transformer)) result)
 
             {:x "true"} {:x :true, :enter true, :leave true} ;; first
             {:x "true", :enter "invalid"} {:x :true, :enter "invalid", :leave true} ;; first (fallback)
@@ -1378,15 +1378,15 @@
 
       (testing "changing type results in children not being called"
         (are [schema data]
-          (= "age:31"
-             (m/encode schema data
-                       (let [should-not-be-called
-                             (fn [_] (throw (ex-info "Was called" {:schema schema
-                                                                   :data data})))]
-                         (mt/transformer
-                          {:name :test
-                           :encoders {'int? should-not-be-called
-                                      'keyword? should-not-be-called}}))))
+             (= "age:31"
+                (m/encode schema data
+                          (let [should-not-be-called
+                                (fn [_] (throw (ex-info "Was called" {:schema schema
+                                                                      :data data})))]
+                            (mt/transformer
+                             {:name :test
+                              :encoders {'int? should-not-be-called
+                                         'keyword? should-not-be-called}}))))
 
           [:map {:encode/test (fn [{:keys [age]}]
                                 (str "age:" age))}
@@ -1545,11 +1545,11 @@
         (testing "empty"
           (let [s [typ]]
             (are [v v* errs]
-              (let [es errs]
-                (and (= (m/validate s v) (nil? es))
-                     (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                     (= (m/parse s v) (if (nil? es) (if (= typ :cat) v v*) ::m/invalid))
-                     (or (some? es) (= (m/unparse s (if (= typ :cat) v v*)) v))))
+                 (let [es errs]
+                   (and (= (m/validate s v) (nil? es))
+                        (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                        (= (m/parse s v) (if (nil? es) (if (= typ :cat) v v*) ::m/invalid))
+                        (or (some? es) (= (m/unparse s (if (= typ :cat) v v*)) v))))
 
               0 nil [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
               "foo" nil [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1560,11 +1560,11 @@
         (testing "single"
           (let [s [typ (case typ :cat string? [:s string?])]]
             (are [v v* errs]
-              (let [es errs]
-                (and (= (m/validate s v) (nil? es))
-                     (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                     (= (m/parse s v) (if (nil? es) (if (= typ :cat) v v*) ::m/invalid))
-                     (or (some? es) (= (m/unparse s (if (= typ :cat) v v*)) v))))
+                 (let [es errs]
+                   (and (= (m/validate s v) (nil? es))
+                        (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                        (= (m/parse s v) (if (nil? es) (if (= typ :cat) v v*) ::m/invalid))
+                        (or (some? es) (= (m/unparse s (if (= typ :cat) v v*)) v))))
 
               0 nil [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
               "foo" nil [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1577,11 +1577,11 @@
         (testing "pair"
           (let [s [typ (case typ :cat string? [:s string?]) (case typ :cat int? [:n int?])]]
             (are [v v* errs]
-              (let [es errs]
-                (and (= (m/validate s v) (nil? es))
-                     (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                     (= (m/parse s v) (if (nil? es) (if (= typ :cat) v v*) ::m/invalid))
-                     (or (some? es) (= (m/unparse s (if (= typ :cat) v v*)) v))))
+                 (let [es errs]
+                   (and (= (m/validate s v) (nil? es))
+                        (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                        (= (m/parse s v) (if (nil? es) (if (= typ :cat) v v*) ::m/invalid))
+                        (or (some? es) (= (m/unparse s (if (= typ :cat) v v*)) v))))
 
               0 nil [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
               "foo" nil [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1597,11 +1597,11 @@
           (let [s [typ (case typ :cat string? [:s string?]) (case typ :cat int? [:n int?])
                    (case typ :cat keyword? [:k keyword?])]]
             (are [v v* errs]
-              (let [es errs]
-                (and (= (m/validate s v) (nil? es))
-                     (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                     (= (m/parse s v) (if (nil? es) (if (= typ :cat) v v*) ::m/invalid))
-                     (or (some? es) (= (m/unparse s (if (= typ :cat) v v*)) v))))
+                 (let [es errs]
+                   (and (= (m/validate s v) (nil? es))
+                        (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                        (= (m/parse s v) (if (nil? es) (if (= typ :cat) v v*) ::m/invalid))
+                        (or (some? es) (= (m/unparse s (if (= typ :cat) v v*)) v))))
 
               0 nil [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
               "foo" nil [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1632,12 +1632,12 @@
         (testing "single"
           (let [s [typ (case typ :alt string? [:s string?])]]
             (are [v v*s errs]
-              (let [[v* v**] v*s
-                    es errs]
-                (and (= (m/validate s v) (nil? es))
-                     (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                     (= (m/parse s v) (if (nil? es) (if (= typ :alt) v* v**) ::m/invalid))
-                     (or (some? es) (= (m/unparse s (if (= typ :alt) v* v**)) v))))
+                 (let [[v* v**] v*s
+                       es errs]
+                   (and (= (m/validate s v) (nil? es))
+                        (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                        (= (m/parse s v) (if (nil? es) (if (= typ :alt) v* v**) ::m/invalid))
+                        (or (some? es) (= (m/unparse s (if (= typ :alt) v* v**)) v))))
 
               0 nil [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
               "foo" nil [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1649,12 +1649,12 @@
         (testing "pair"
           (let [s [typ (case typ :alt string? [:s string?]) (case typ :alt int? [:n int?])]]
             (are [v v*s errs]
-              (let [[v* v**] v*s
-                    es errs]
-                (and (= (m/validate s v) (nil? es))
-                     (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                     (= (m/parse s v) (if (nil? es) (if (= typ :alt) v* v**) ::m/invalid))
-                     (or (some? es) (= (m/unparse s (if (= typ :alt) v* v**)) v))))
+                 (let [[v* v**] v*s
+                       es errs]
+                   (and (= (m/validate s v) (nil? es))
+                        (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                        (= (m/parse s v) (if (nil? es) (if (= typ :alt) v* v**) ::m/invalid))
+                        (or (some? es) (= (m/unparse s (if (= typ :alt) v* v**)) v))))
 
               0 nil [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
               "foo" nil [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1668,12 +1668,12 @@
           (let [s [typ (case typ :alt string? [:s string?]) (case typ :alt int? [:n int?])
                    (case typ :alt keyword? [:k keyword?])]]
             (are [v v*s errs]
-              (let [[v* v**] v*s
-                    es errs]
-                (and (= (m/validate s v) (nil? es))
-                     (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                     (= (m/parse s v) (if (nil? es) (if (= typ :alt) v* v**) ::m/invalid))
-                     (or (some? es) (= (m/unparse s (if (= typ :alt) v* v**)) v))))
+                 (let [[v* v**] v*s
+                       es errs]
+                   (and (= (m/validate s v) (nil? es))
+                        (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                        (= (m/parse s v) (if (nil? es) (if (= typ :alt) v* v**) ::m/invalid))
+                        (or (some? es) (= (m/unparse s (if (= typ :alt) v* v**)) v))))
 
               0 nil [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
               "foo" nil [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1691,11 +1691,11 @@
 
       (let [s [:? string?]]
         (are [v v* errs]
-          (let [es errs]
-            (and (= (m/validate s v) (nil? es))
-                 (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                 (= (m/parse s v) (if (nil? es) v* ::m/invalid))
-                 (or (some? es) (= (m/unparse s v*) v))))
+             (let [es errs]
+               (and (= (m/validate s v) (nil? es))
+                    (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                    (= (m/parse s v) (if (nil? es) v* ::m/invalid))
+                    (or (some? es) (= (m/unparse s v*) v))))
 
           0 nil [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
           "foo" nil [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1721,11 +1721,11 @@
 
       (let [s [:* string?]]
         (are [v errs]
-          (let [es errs]
-            (and (= (m/validate s v) (nil? es))
-                 (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                 (= (m/parse s v) (if (nil? es) v ::m/invalid))
-                 (or (some? es) (= (m/unparse s v) v))))
+             (let [es errs]
+               (and (= (m/validate s v) (nil? es))
+                    (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                    (= (m/parse s v) (if (nil? es) v ::m/invalid))
+                    (or (some? es) (= (m/unparse s v) v))))
 
           0 [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
           "foo" [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1747,11 +1747,11 @@
 
       (let [s [:+ string?]]
         (are [v errs]
-          (let [es errs]
-            (and (= (m/validate s v) (nil? es))
-                 (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                 (= (m/parse s v) (if (nil? es) v ::m/invalid))
-                 (or (some? es) (= (m/unparse s v) v))))
+             (let [es errs]
+               (and (= (m/validate s v) (nil? es))
+                    (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                    (= (m/parse s v) (if (nil? es) v ::m/invalid))
+                    (or (some? es) (= (m/unparse s v) v))))
 
           0 [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
           "foo" [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1769,11 +1769,11 @@
 
       (let [s [:repeat {:min 1, :max 3} string?]]
         (are [v errs]
-          (let [es errs]
-            (and (= (m/validate s v) (nil? es))
-                 (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                 (= (m/parse s v) (if (nil? es) v ::m/invalid))
-                 (or (some? es) (= (m/unparse s v) v))))
+             (let [es errs]
+               (and (= (m/validate s v) (nil? es))
+                    (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                    (= (m/parse s v) (if (nil? es) v ::m/invalid))
+                    (or (some? es) (= (m/unparse s v) v))))
 
           0 [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
           "foo" [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -1795,11 +1795,11 @@
 
       (let [s [:* [:schema [:* string?]]]]
         (are [v errs]
-          (let [es errs]
-            (and (= (m/validate s v) (nil? es))
-                 (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
-                 (= (m/parse s v) (if (nil? es) v ::m/invalid))
-                 (or (some? es) (= (m/unparse s v) v))))
+             (let [es errs]
+               (and (= (m/validate s v) (nil? es))
+                    (results= (m/explain s v) (and es {:schema s, :value v, :errors es}))
+                    (= (m/parse s v) (if (nil? es) v ::m/invalid))
+                    (or (some? es) (= (m/unparse s v) v))))
 
           0 [{:path [], :in [], :schema s, :value 0, :type ::m/invalid-type}]
           "foo" [{:path [], :in [], :schema s, :value "foo", :type ::m/invalid-type}]
@@ -2272,7 +2272,7 @@
 
 (deftest -regex-min-max-size-test
   (are [s min-max]
-    (= min-max ((juxt :min :max) (m/-regex-min-max (m/schema s) false)))
+       (= min-max ((juxt :min :max) (m/-regex-min-max (m/schema s) false)))
 
     int? [1 1]
     [:cat] [0 0]
@@ -2715,7 +2715,6 @@
 (deftest cat-catn-unparse-test
   (is (= ::m/invalid (m/unparse [:cat string? int? string?] [1 2 3])))
   (is (= ::m/invalid (m/unparse [:catn [:a string?] [:b int?] [:c string?]] {:a 1 :b 2 :c 3}))))
-
 
 (deftest issue-451-test
   (testing "registry -in schema vector syntax"

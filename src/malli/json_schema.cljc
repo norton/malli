@@ -109,9 +109,9 @@
       (seq required) (assoc :required required)
       closed (assoc :additionalProperties false)
       default (cond->
-                additionalProperties' (assoc :additionalProperties additionalProperties')
-                properties' (update :properties merge properties')
-                required' (update :required (comp vec distinct into) required')))))
+               additionalProperties' (assoc :additionalProperties additionalProperties')
+               properties' (update :properties merge properties')
+               required' (update :required (comp vec distinct into) required')))))
 
 (defmethod accept :multi [_ _ children _] {:oneOf (mapv last children)})
 

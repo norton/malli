@@ -145,7 +145,7 @@
         (is (every? (partial m/validate schema) (mg/sample schema {:size 100})))))
     (testing "recursion limiting"
       (are [schema]
-        (every? (partial m/validate schema) (mg/sample schema {:size 100}))
+           (every? (partial m/validate schema) (mg/sample schema {:size 100}))
 
         [:schema {:registry {::rec [:maybe [:ref ::rec]]}} ::rec]
         [:schema {:registry {::rec [:map [:rec {:optional true} [:ref ::rec]]]}} ::rec]
@@ -249,30 +249,30 @@
 
 (defspec cat-test 100
   (for-all [[s coll] (schema+coll-gen :cat (gen/vector seqex-child))]
-    (m/validate s coll)))
+           (m/validate s coll)))
 
 (defspec catn-test 100
   (for-all [[s coll] (->> (gen/vector (gen/tuple gen/keyword seqex-child))
                           (gen/such-that (fn [coll] (or (empty? coll) (apply distinct? (map first coll)))))
                           (schema+coll-gen :catn))]
-    (m/validate s coll)))
+           (m/validate s coll)))
 
 (defspec alt-test 100
   (for-all [[s coll] (schema+coll-gen :alt (gen/not-empty (gen/vector seqex-child)))]
-    (m/validate s coll)))
+           (m/validate s coll)))
 
 (defspec altn-test 100
   (for-all [[s coll] (->> (gen/not-empty (gen/vector (gen/tuple gen/keyword seqex-child)))
                           (gen/such-that (fn [coll] (or (empty? coll) (apply distinct? (map first coll)))))
                           (schema+coll-gen :altn))]
-    (m/validate s coll)))
+           (m/validate s coll)))
 
 (defspec ?*+-test 100
   (for-all [[s coll] (gen/let [type (gen/elements [:? :* :+])
                                child seqex-child]
                        (let [schema [type child]]
                          (gen/tuple (gen/return schema) (mg/generator schema))))]
-    (m/validate s coll)))
+           (m/validate s coll)))
 
 (defspec repeat-test 100
   (for-all [[s coll] (schema+coll-gen :repeat (gen/tuple
@@ -280,13 +280,13 @@
                                                          len gen/nat]
                                                  {:min min, :max (+ min len)})
                                                seqex-child))]
-    (m/validate s coll)))
+           (m/validate s coll)))
 
 (deftest min-max-test
 
   (testing "valid properties"
     (are [schema]
-      (every? #(<= 10 % 20) (map count (mg/sample schema {:size 1000})))
+         (every? #(<= 10 % 20) (map count (mg/sample schema {:size 1000})))
 
       [:vector {:min 10, :max 20} int?]
       [:set {:min 10, :max 20} int?]
@@ -306,7 +306,7 @@
 
   (testing "invalid properties"
     (are [schema]
-      (thrown? #?(:clj Exception, :cljs js/Error) (mg/sample schema {:size 1000}))
+         (thrown? #?(:clj Exception, :cljs js/Error) (mg/sample schema {:size 1000}))
 
       ;; :gen/min less than :min
       [:vector {:min 11, :gen/min 10, :max 100, :gen/max 20} int?]
@@ -453,9 +453,9 @@
                                                           (gen/return nil))]))]))
                     {:seed 0})))
   (is (= '([["ping" ["pong" ["ping" ["pong" nil]]]] ["pong" ["ping" nil]]] [["ping" nil] ["pong" ["ping" ["pong" ["ping" nil]]]]]
-           [["ping" ["pong" nil]] ["pong" ["ping" nil]]] [["ping" nil] ["pong" ["ping" nil]]] [["ping" nil] ["pong" nil]]
-           [["ping" ["pong" nil]] ["pong" nil]] [["ping" nil] ["pong" ["ping" nil]]] [["ping" ["pong" nil]] ["pong" nil]]
-           [["ping" ["pong" ["ping" ["pong" ["ping" ["pong" nil]]]]]] ["pong" nil]] [["ping" nil] ["pong" ["ping" nil]]])
+                                                                           [["ping" ["pong" nil]] ["pong" ["ping" nil]]] [["ping" nil] ["pong" ["ping" nil]]] [["ping" nil] ["pong" nil]]
+                                                                           [["ping" ["pong" nil]] ["pong" nil]] [["ping" nil] ["pong" ["ping" nil]]] [["ping" ["pong" nil]] ["pong" nil]]
+                                                                           [["ping" ["pong" ["ping" ["pong" ["ping" ["pong" nil]]]]]] ["pong" nil]] [["ping" nil] ["pong" ["ping" nil]]])
          (mg/sample [:schema
                      {:registry {::ping [:tuple [:= "ping"] [:maybe [:ref ::pong]]]
                                  ::pong [:tuple [:= "pong"] [:maybe [:ref ::ping]]]}}
@@ -487,8 +487,8 @@
                                                         (gen/return nil))]))))
                     {:seed 0})))
   (is (= '([["A" ["B" ["C" ["A" nil]]]] ["B" ["C" nil]]] [["A" nil] ["B" ["C" ["A" ["B" nil]]]]] [["A" ["B" nil]] ["B" ["C" nil]]]
-           [["A" nil] ["B" ["C" nil]]] [["A" nil] ["B" nil]] [["A" ["B" nil]] ["B" nil]] [["A" nil] ["B" ["C" ["A" nil]]]]
-           [["A" ["B" nil]] ["B" nil]] [["A" ["B" ["C" ["A" nil]]]] ["B" nil]] [["A" nil] ["B" ["C" nil]]])
+                                                         [["A" nil] ["B" ["C" nil]]] [["A" nil] ["B" nil]] [["A" ["B" nil]] ["B" nil]] [["A" nil] ["B" ["C" ["A" nil]]]]
+                                                         [["A" ["B" nil]] ["B" nil]] [["A" ["B" ["C" ["A" nil]]]] ["B" nil]] [["A" nil] ["B" ["C" nil]]])
          (mg/sample [:schema
                      {:registry {::A [:tuple [:= "A"] [:maybe [:ref ::B]]]
                                  ::B [:tuple [:= "B"] [:maybe [:ref ::C]]]

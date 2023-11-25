@@ -21,7 +21,6 @@
 ;; generators
 ;;
 
-
 ;; # Notes for implementors
 ;;
 ;; For the most part, -schema-generator is a pretty direct translation from schemas to generators.
@@ -62,8 +61,8 @@
                                       (cond-> {}
                                         original-generator-schema (assoc :schema (m/form original-generator-schema))))))
                             gen/any)
-             {::never-gen true
-              ::original-generator-schema original-generator-schema}))
+    {::never-gen true
+     ::original-generator-schema original-generator-schema}))
 
 (defn -unreachable-gen?
   "Returns true iff generator g generators no values."

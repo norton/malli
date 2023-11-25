@@ -8,7 +8,6 @@
 ;; Please use the malli.instrument namespace from now on.
 ;;
 
-
 ;;
 ;; Collect metadata declared function schemas - register them into the known malli.core/-function-schemas* atom based on their metadata.
 ;;
@@ -42,8 +41,8 @@
                              form))
             schema* (walk/postwalk -qualify-sym schema)
             metadata (assoc
-                       (walk/postwalk -qualify-sym (m/-unlift-keys meta "malli"))
-                       :metadata-schema? true)]
+                      (walk/postwalk -qualify-sym (m/-unlift-keys meta "malli"))
+                      :metadata-schema? true)]
         (m/-register-function-schema! ns simple-name schema* metadata :cljs identity)
         `(do
            (m/-register-function-schema! '~ns '~simple-name ~schema* ~metadata :cljs identity)

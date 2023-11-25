@@ -25,7 +25,7 @@
 
 (deftest simplify-map-entry-test
   (are [entry expected]
-    (= expected (mu/-simplify-map-entry entry))
+       (= expected (mu/-simplify-map-entry entry))
 
     [:x 'int?] [:x 'int?]
     [:x nil 'int?] [:x 'int?]
@@ -36,7 +36,7 @@
 
 (deftest merge-test
   (are [?s1 ?s2 expected]
-    (= true (mu/equals expected (mu/merge ?s1 ?s2)))
+       (= true (mu/equals expected (mu/merge ?s1 ?s2)))
 
     int? int? int?
     int? pos-int? pos-int?
@@ -121,7 +121,7 @@
 
 (deftest union-test
   (are [?s1 ?s2 expected]
-    (= true (mu/equals expected (mu/union ?s1 ?s2)))
+       (= true (mu/equals expected (mu/union ?s1 ?s2)))
 
     int? int? int?
     int? pos-int? [:or int? pos-int?]
@@ -281,10 +281,10 @@
 
     (testing "get"
       (are [schema key expected]
-        (form= (try
-                 (mu/get (m/schema schema) key)
-                 (catch #?(:clj Exception, :cljs js/Error) _ ::throws))
-               expected)
+           (form= (try
+                    (mu/get (m/schema schema) key)
+                    (catch #?(:clj Exception, :cljs js/Error) _ ::throws))
+                  expected)
 
         nil 0 ::throws
 
@@ -341,10 +341,10 @@
 
     (testing "assoc"
       (are [schema key value expected]
-        (form= (try
-                 (mu/assoc (m/schema schema) key value)
-                 (catch #?(:clj Exception, :cljs js/Error) _ ::throws))
-               expected)
+           (form= (try
+                    (mu/assoc (m/schema schema) key value)
+                    (catch #?(:clj Exception, :cljs js/Error) _ ::throws))
+                  expected)
 
         nil 0 'int? ::throws
 
@@ -775,13 +775,13 @@
                (mu/in->paths [:a 0 :b])))))
   (testing "orn, catn and altn don't contribute to :in"
     (are [type value]
-      (= [:a]
-         (let [schema (m/schema [type [:a-branch [:map [:a :int]]]])]
-           (->> (m/explain schema value)
-                :errors
-                first
-                :path
-                (mu/path->in schema))))
+         (= [:a]
+            (let [schema (m/schema [type [:a-branch [:map [:a :int]]]])]
+              (->> (m/explain schema value)
+                   :errors
+                   first
+                   :path
+                   (mu/path->in schema))))
 
       :orn {:a "2"}
       :catn [{:a "2"}]
