@@ -5,9 +5,7 @@
         org.clojure/test.check {:mvn/version "1.1.1"}
         ;; pretty errors, optional deps
         fipp/fipp {:mvn/version "0.6.26"}
-        mvxcvi/arrangement {:mvn/version "2.1.0"}
-        io.github.json-schema-org/JSON-Schema-Test-Suite {:git/sha       "3dab98cae07f244afcb278c0b7a03c0d8975a3de"
-                                                          :deps/manifest :deps}}
+        mvxcvi/arrangement {:mvn/version "2.1.0"}}
  :aliases {:test {:extra-paths ["test"]
                   :extra-deps {com.gfredericks/test.chuck {:mvn/version "0.2.14"}
                                lambdaisland/kaocha {:mvn/version "1.87.1366"}
@@ -27,7 +25,9 @@
                                lambdaisland/deep-diff {:mvn/version "0.0-47"}
                                com.bhauman/spell-spec {:mvn/version "0.1.2"}
                                org.clojure/spec-alpha2 {:git/url "https://github.com/clojure/spec-alpha2.git"
-                                                        :sha "4cbfa677c4cd66339f18e1c122222c05c69e0d8e"}}}
+                                                        :sha "4cbfa677c4cd66339f18e1c122222c05c69e0d8e"}
+                               io.github.json-schema-org/JSON-Schema-Test-Suite {:git/sha "3dab98cae07f244afcb278c0b7a03c0d8975a3de"
+                                                                                 :deps/manifest :deps}}}
            :sci {:extra-deps {org.babashka/sci {:mvn/version "0.8.41"}}}
            :cherry {:extra-deps {io.github.squint-cljs/cherry {:git/sha "d52a0ab329f36f4cfabf7142bc5ac1380362dbfa"}}}
            :test-sci {:extra-paths ["test-sci"]
