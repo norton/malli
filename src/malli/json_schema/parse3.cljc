@@ -1,34 +1,30 @@
 (ns malli.json-schema.parse3
-  (:require [clojure.set :as set]))
+  (:require [clojure.set :as set]
+            [babashka.fs :as fs]
+            [cheshire.core :as json]
+            [clojure.core :as core]
+            [clojure.java.io :as io]
+            [clojure.pprint :as pprint]))
 
 (declare schema->malli)
 
-(def annotations #{:title :description :default :examples :example})
+(def annotations #{:example :examples :default :description :metadata :title})
+
+(def annotations-json-schema (into {} (map #(vector % (keyword "json-schema" (name %))) annotations)))
 
 (defn annotations->properties [js-schema]
   (-> js-schema
       (select-keys annotations)
-      (set/rename-keys {:examples    :json-schema/examples
-                        :example     :json-schema/example
-                        :title       :json-schema/title
-                        :description :json-schema/description
-                        :default     :json-schema/default})))
+      (set/rename-keys annotations-json-schema)))
 
-;; Utility Functions
-#_(defn- map-values
-    ([-fn] (map (fn [[k v]] [k (-fn v)])))
-    ([-fn coll] (sequence (map-values -fn) coll)))
+(defn intersects? [a b]
+  (not-empty (set/intersection (set (keys a)) (set b))))
 
 ;; Parsing
 (defmulti type->malli :type)
 
 (defn $ref [js-schema]
   [:schema [:ref (:$ref js-schema)]])
-
-#_(mu/update-properties
-   ...
-   merge
-   (annotations->properties js-schema))
 
 (defn properties->malli [required [k v]]
   (cond-> [k]
@@ -56,7 +52,7 @@
 
 (defn object->malli [{:keys [additionalProperties] :as v}]
   (let [required (into #{}
-                       ;; TODO Should use the same fn as $ref
+                     ;; TODO Should use the same fn as $ref
                        (map keyword)
                        (:required v))
         closed? (false? additionalProperties)]
@@ -83,8 +79,8 @@
 
     ;; Aggregates
     (contains? js-schema :oneOf) (into
-                                   ;; TODO Figure out how to make it exclusively select o schema
-                                   ;; how about `m/multi`?
+                                  ;; TODO Figure out how to make it exclusively select o schema
+                                  ;; how about `m/multi`?
                                   [:or]
                                   (map schema->malli)
                                   (:oneOf js-schema))
@@ -103,10 +99,12 @@
 
     (contains? js-schema :$ref) ($ref js-schema)
 
+    (intersects? js-schema annotations) (annotations->properties js-schema)
+
     (empty? js-schema) :any
 
-    :else :any #_(throw (ex-info "Not supported" {:json-schema js-schema
-                                                  :reason      ::schema-type}))))
+    :else (throw (ex-info "Not Supported" {:json-schema js-schema
+                                           :reason      ::schema-type}))))
 
 (defmethod type->malli "string" [{:keys [pattern minLength maxLength enum format]}]
   ;; `format` metadata is deliberately not considered.
@@ -183,3 +181,14 @@
                                                [(str "#/items/" idx) (schema->malli x)]))
                                 (:items obj)))}
    "#"])
+
+(def json-file-path (str (fs/expand-home "~/projects/logic-bicep/work-flow-definition.json")))
+
+(defn json-file->edn [file-path]
+  (core/with-open [reader (io/reader file-path)]
+    (json/parse-string (core/slurp reader) true)))
+
+(def json-schema (json-file->edn json-file-path))
+
+#_(json-schema-document->malli json-schema)
+#_(pprint/pprint (json-schema-document->malli json-schema))
